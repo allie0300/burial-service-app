@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ALMIEFTAGH - Family Coverage Application</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+        color: #333;
+      }
+      h1,
+      h2 {
+        color: #2e8b57;
+      }
+      .form-section {
+        margin-bottom: 30px;
+        padding-bottom: 20px;
+        border-bottom: 1px solid #eee;
+      }
+      .form-row {
+        margin-bottom: 15px;
+      }
+      label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: bold;
+      }
+      input[type="text"],
+      input[type="email"],
+      input[type="tel"],
+      textarea {
+        width: 100%;
+        padding: 8px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+      }
+      .file-upload {
+        margin-top: 10px;
+      }
+      .file-upload button {
+        background: #f1c40f;
+        color: #000;
+        padding: 6px 12px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+      .submit-btn {
+        background: #2e8b57;
+        color: white;
+        padding: 12px 24px;
+        border: none;
+        border-radius: 4px;
+        font-size: 16px;
+        cursor: pointer;
+        margin-top: 20px;
+      }
+      .remove-btn {
+        color: #e74c3c;
+        background: none;
+        border: none;
+        cursor: pointer;
+        text-decoration: underline;
+        margin-top: 10px;
+      }
+      .add-member-btn {
+        background: #f1c40f;
+        color: #000;
+        padding: 10px 15px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        margin-right: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Family Coverage Application</h1>
+
+    <form id="burialForm">
+      <!-- Primary Member Section -->
+      <div class="form-section">
+        <h2>Primary Member</h2>
+
+        <div class="form-row">
+          <label>First Name</label>
+          <input type="text" id="primaryFirstName" required />
+        </div>
+
+        <div class="form-row">
+          <label>Surname</label>
+          <input type="text" id="primarySurname" required />
+        </div>
+
+        <div class="form-row">
+          <label>ID Number</label>
+          <input type="text" id="primaryIdNumber" required />
+        </div>
+
+        <div class="form-row">
+          <label>ID Document</label>
+          <div class="file-upload">
+            <button
+              type="button"
+              onclick="document.getElementById('primaryIdFile').click()"
+            >
+              Choose file
+            </button>
+            <input
+              type="file"
+              id="primaryIdFile"
+              style="display: none"
+              accept=".pdf,.jpg,.png"
+            />
+            <span id="primaryFileName">No file chosen</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Contact Information -->
+      <div class="form-section">
+        <h2>Contact Information</h2>
+
+        <div class="form-row">
+          <label>Email</label>
+          <input type="email" id="contactEmail" required />
+        </div>
+
+        <div class="form-row">
+          <label>Phone</label>
+          <input type="tel" id="contactPhone" required />
+        </div>
+
+        <div class="form-row">
+          <label>Full Address</label>
+          <textarea id="fullAddress" rows="3" required></textarea>
+        </div>
+      </div>
+
+      <!-- Family Members Container -->
+      <div id="membersContainer">
+        <!-- Family members will be added here -->
+      </div>
+
+      <!-- Add Member Button -->
+      <button type="button" id="addMemberBtn" class="add-member-btn">
+        + Add Family Member
+      </button>
+
+      <!-- Submit Button -->
+      <button type="submit" class="submit-btn">Submit Application</button>
+    </form>
+
+    <script type="module">
+      import { db, storage } from "../src/firebase.js";
+      import { collection, addDoc, serverTimestamp } from "firebase/firestore";
+      import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+
+      // File input display
+      document
+        .getElementById("primaryIdFile")
+        .addEventListener("change", function (e) {
+          document.getElementById("primaryFileName").textContent = this.files[0]
+            ? this.files[0].name
+            : "No file chosen";
+        });
+
+      // Add member functionality
+      let memberCount = 0;
+      document
+        .getElementById("addMemberBtn")
+        .addEventListener("click", function () {
+          if (memberCount >= 4) {
+            alert("Maximum 4 additional members allowed");
+            return;
+          }
+
+          memberCount++;
+          const memberId = `member${memberCount}`;
+
+          const memberHTML = `
+                <div class="form-section" id="${memberId}">
+                    <h2>Family Member #${memberCount}</h2>
+                    
+                    <div class="form-row">
+                        <label>First Name</label>
+                        <input type="text" id="${memberId}-firstName" required>
+                    </div>
+                    
+                    <div class="form-row">
+                        <label>Surname</label>
+                        <input type="text" id="${memberId}-surname" required>
+                    </div>
+                    
+                    <div class="form-row">
+                        <label>ID Number</label>
+                        <input type="text" id="${memberId}-idNumber">
+                    </div>
+                    
+                    <div class="form-row">
+                        <label>ID Document (Optional)</label>
+                        <div class="file-upload">
+                            <button type="button" onclick="document.getElementById('${memberId}-file').click()">
+                                Choose file
+                            </button>
+                            <input type="file" id="${memberId}-file" style="display:none;" accept=".pdf,.jpg,.png">
+                            <span id="${memberId}-fileName">No file chosen</span>
+                        </div>
+                    </div>
+                    
+                    <button type="button" class="remove-btn" onclick="document.getElementById('${memberId}').remove(); memberCount--;">
+                        Remove
+                    </button>
+                </div>
+            `;
+
+          document
+            .getElementById("membersContainer")
+            .insertAdjacentHTML("beforeend", memberHTML);
+
+          // Add file name display for new member
+          document
+            .getElementById(`${memberId}-file`)
+            .addEventListener("change", function (e) {
+              document.getElementById(`${memberId}-fileName`).textContent = this
+                .files[0]
+                ? this.files[0].name
+                : "No file chosen";
+            });
+        });
+
+      // Form submission
+      document
+        .getElementById("burialForm")
+        .addEventListener("submit", async function (e) {
+          e.preventDefault();
+
+          try {
+            // Upload primary member's ID
+            const primaryIdFile =
+              document.getElementById("primaryIdFile").files[0];
+            let primaryIdUrl = "";
+
+            if (primaryIdFile) {
+              const fileRef = ref(
+                storage,
+                `ids/${
+                  document.getElementById("contactEmail").value
+                }/primary.pdf`
+              );
+              await uploadBytes(fileRef, primaryIdFile);
+              primaryIdUrl = await getDownloadURL(fileRef);
+            }
+
+            // Process family members
+            const familyMembers = [];
+            for (let i = 1; i <= memberCount; i++) {
+              const memberId = `member${i}`;
+              if (document.getElementById(memberId)) {
+                const memberData = {
+                  firstName: document.getElementById(`${memberId}-firstName`)
+                    .value,
+                  surname: document.getElementById(`${memberId}-surname`).value,
+                  idNumber: document.getElementById(`${memberId}-idNumber`)
+                    .value,
+                };
+
+                // Upload member ID if provided
+                const memberFile = document.getElementById(`${memberId}-file`)
+                  .files[0];
+                if (memberFile) {
+                  const fileRef = ref(
+                    storage,
+                    `ids/${
+                      document.getElementById("contactEmail").value
+                    }/member_${i}.pdf`
+                  );
+                  await uploadBytes(fileRef, memberFile);
+                  memberData.idUrl = await getDownloadURL(fileRef);
+                }
+
+                familyMembers.push(memberData);
+              }
+            }
+
+            // Save to Firestore
+            await addDoc(collection(db, "applications"), {
+              primary: {
+                firstName: document.getElementById("primaryFirstName").value,
+                surname: document.getElementById("primarySurname").value,
+                idNumber: document.getElementById("primaryIdNumber").value,
+                idUrl: primaryIdUrl,
+              },
+              contact: {
+                email: document.getElementById("contactEmail").value,
+                phone: document.getElementById("contactPhone").value,
+                address: document.getElementById("fullAddress").value,
+              },
+              familyMembers: familyMembers,
+              status: "pending",
+              createdAt: serverTimestamp(),
+            });
+
+            alert("Application submitted successfully!");
+            this.reset();
+            document.getElementById("membersContainer").innerHTML = "";
+            memberCount = 0;
+          } catch (error) {
+            console.error("Error submitting application:", error);
+            alert("Error submitting application. Please try again.");
+          }
+        });
+    </script>
+  </body>
+</html>

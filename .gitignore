@@ -1,23 +1,36 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
-# dependencies
+# ===== Environment Files =====
+.env
+.env.*
+!.env.template  # Keep the template file
+!.env.example   # Keep example files if needed
+
+# Firebase specific
+.firebase/
+firebase-debug.log
+firebase-export.json
+
+# ===== System Files =====
+.DS_Store
+Thumbs.db
+
+# ===== Dependencies =====
 /node_modules
 /.pnp
 .pnp.js
 
-# testing
-/coverage
-
-# production
+# ===== Build/Test =====
 /build
+/coverage
+*.log
 
-# misc
-.DS_Store
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
+# ===== IDE =====
+.idea/
+.vscode/
+*.swp
+*.swo
 
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
+# ===== OS Generated =====
+ehthumbs.db
+[Tt]humbs.db
