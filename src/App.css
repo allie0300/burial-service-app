@@ -577,3 +577,83 @@ body {
     gap: 20px;
   }
 }
+/* src/App.css - Add this to the existing file */
+
+/* Navigation */
+.app-nav {
+  /* ... existing styles ... */
+  height: 80px; /* Give it a fixed height if your logo is tall */
+  padding: 0 20px; /* Keep consistent padding */
+}
+
+.nav-brand {
+  /* Ensure the logo and text (if any) are aligned */
+  display: flex;
+  align-items: center;
+}
+
+.app-logo {
+  height: 60px; /* Adjust as needed - this is a good starting point for your logo */
+  width: auto; /* Maintain aspect ratio */
+  margin-right: 15px; /* Add some space if you keep the h2 text next to it */
+  transition: transform 0.3s ease; /* Smooth hover effect */
+}
+
+.app-logo:hover {
+  transform: scale(1.05); /* Slight zoom on hover */
+}
+
+.nav-brand h2 { /* If you keep the h2, adjust its styling */
+  color: #2c3e50;
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin: 0; /* Remove default margins if next to logo */
+}
+
+/* Adjust nav-link padding if needed due to taller nav */
+.nav-links .nav-link {
+  padding: 0 0; /* Adjust to center vertically, or use align-items: center on nav-links parent */
+  height: 100%; /* Make links take full height of nav */
+  display: flex;
+  align-items: center; /* Vertically align link text */
+}
+
+/* ... existing styles ... */
+
+/* Responsive adjustment for small screens */
+@media (max-width: 768px) {
+  .app-nav {
+    /* ... existing styles ... */
+    height: auto; /* Allow height to adjust for stacked content */
+    padding: 15px;
+  }
+  
+  .nav-brand {
+    justify-content: center; /* Center logo on small screens */
+    width: 100%;
+    margin-bottom: 15px;
+  }
+
+  .app-logo {
+    height: 50px; /* Slightly smaller logo on mobile */
+    margin-right: 0; /* No margin if stacked */
+  }
+
+  .nav-links {
+    /* ... existing styles ... */
+    flex-wrap: wrap;
+    justify-content: center;
+    width: 100%;
+    margin-top: 0; /* Remove top margin from earlier styles if applicable */
+  }
+
+  .nav-link {
+    padding: 10px 0; /* Adjust vertical padding */
+  }
+}
+
+/* Ensure global nav items are vertically centered if nav has a fixed height */
+.app-nav {
+    display: flex;
+    align-items: center; /* This is key for vertical alignment */
+}

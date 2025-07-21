@@ -272,7 +272,7 @@ function ApplyForm() {
     <div className="subscription-form-container">
       <h2>Burial Benefit Subscription</h2>
       <p className="form-description">
-        R100/month covers you and up to 5 family members. ID copies required for all individuals.
+        R100/month covers you and your family. ID copies required for all individuals.
       </p>
 
       {error && (

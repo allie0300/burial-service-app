@@ -8,7 +8,7 @@ import ProtectedRoute from './components/ProtectedRoute';
 import ApplyForm from './pages/ApplyForm';
 import Dashboard from './pages/Dashboard';
 import './App.css';
-
+import almieftaghLogo from './assets/Almieftagh_logo.png'; // Adjust filename as needed
 function App() {
   const [connection, setConnection] = useState({
     status: 'connecting',
@@ -51,7 +51,11 @@ function App() {
   return (
     <div className="App">
       <nav className="app-nav">
-        <div className="nav-brand">
+         <div className="nav-brand">
+          <Link to="/">
+            <img src={almieftaghLogo} alt="ALMIEFTAGH Burial Services Logo" className="app-logo" />
+          </Link>
+          {/* Keep the h2 here */}
           <h2>ALMIEFTAGH Burial Services</h2>
         </div>
         <div className="nav-links">
@@ -78,12 +82,12 @@ function App() {
           <Route path="/" element={
             <div className="home-page">
               <div className="hero-section">
-                <h1>ALMIEFTAGH Burial Services</h1>
+                <h1>Welcome to Almieftagh Burial Services</h1>
                 <p className="hero-subtitle">Dignified Islamic burial services for your family</p>
                 <div className="hero-features">
                   <div className="feature">
                     <span className="feature-icon">👨‍👩‍👧‍👦</span>
-                    <span>Cover up to 5 family members</span>
+                    <span>Cover the whole family</span>
                   </div>
                   <div className="feature">
                     <span className="feature-icon">💰</span>
@@ -117,7 +121,7 @@ function App() {
                     <div className="info-card">
                       <div className="info-icon">💝</div>
                       <h3>Family Coverage</h3>
-                      <p>One affordable plan covers you and up to 5 family members.</p>
+                      <p>One affordable plan that covers you and your family.</p>
                     </div>
                     <div className="info-card">
                       <div className="info-icon">🛡️</div>
@@ -141,7 +145,7 @@ function App() {
                     <div className="pricing-features">
                       <div className="feature-item">
                         <span className="check">✓</span>
-                        <span>Cover up to 5 family members</span>
+                        <span>Cover the whole family</span>
                       </div>
                       <div className="feature-item">
                         <span className="check">✓</span>
@@ -153,11 +157,11 @@ function App() {
                       </div>
                       <div className="feature-item">
                         <span className="check">✓</span>
-                        <span>No waiting periods</span>
+                        <span>Active immediatly after registration fee</span>
                       </div>
                       <div className="feature-item">
                         <span className="check">✓</span>
-                        <span>Debit order or EFT payment</span>
+                        <span>Cash or EFT payment</span>
                       </div>
                     </div>
                     <Link to="/apply" className="pricing-cta">
