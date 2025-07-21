@@ -15,7 +15,7 @@ function App() {
     documentId: null,
     error: null
   });
-
+ 
   const location = useLocation();
 
   useEffect(() => {
@@ -43,6 +43,8 @@ function App() {
         });
       }
     };
+  
+    
     testConnection();
   }, []);
 

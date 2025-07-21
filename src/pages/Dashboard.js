@@ -1,10 +1,14 @@
 // src/pages/Dashboard.js
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect} from 'react';
 import { useNavigate } from 'react-router-dom';
 import { db } from '../firebase';
-import { collection, query, orderBy, onSnapshot, doc, updateDoc } from 'firebase/firestore';
+import { collection, query, deleteDoc, doc, orderBy, onSnapshot, updateDoc } from 'firebase/firestore';
 import { useAuth } from '../contexts/AuthContext';
 import './Dashboard.css';
+import PaymentTrackerModal from '../components/modals/PaymentTrackerModal'; // <--- ADD THIS LINE
+import EditDateModal from '../components/modals/EditDateModal'; // Adjust path
+import DeleteConfirmModal from '../components/modals/DeleteConfirmModal'; // Adjust path
+import SubscriptionModal from '../components/modals/SubscriptionModal'; // Adjust path
 
 // Inline StatCard component to avoid import issues
 function StatCard({ title, value, icon, color = '#3498db' }) {
@@ -21,172 +25,7 @@ function StatCard({ title, value, icon, color = '#3498db' }) {
   );
 }
 
-// Modal component for viewing subscription details
-function SubscriptionModal({ subscription, isOpen, onClose }) {
-  if (!isOpen || !subscription) return null;
 
-  const formatDate = (timestamp) => {
-    if (!timestamp) return 'N/A';
-    return timestamp.toDate ? timestamp.toDate().toLocaleDateString() : new Date(timestamp).toLocaleDateString();
-  };
-
-  return (
-    <div className="modal-overlay" onClick={onClose}>
-      <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-        <div className="modal-header">
-          <h2>Subscription Details</h2>
-          <button className="close-btn" onClick={onClose}>×</button>
-        </div>
-        
-        <div className="modal-body">
-          {/* Subscriber Information */}
-          <div className="detail-section">
-            <h3>Subscriber Information</h3>
-            <div className="detail-grid">
-              <div className="detail-item">
-                <label>First Name:</label>
-                <span>{subscription.subscriber?.fullName || 'N/A'}</span>
-              </div>
-              <div className="detail-item">
-                <label>Surname:</label>
-                <span>{subscription.subscriber?.surname || 'N/A'}</span>
-              </div>
-              <div className="detail-item">
-                <label>ID Number:</label>
-                <span>{subscription.subscriber?.idNumber || 'N/A'}</span>
-              </div>
-              <div className="detail-item">
-                <label>Date of Birth:</label>
-                <span>{subscription.subscriber?.dateOfBirth || 'N/A'}</span>
-              </div>
-              <div className="detail-item">
-                <label>Gender:</label>
-                <span>{subscription.subscriber?.gender ? subscription.subscriber.gender.charAt(0).toUpperCase() + subscription.subscriber.gender.slice(1) : 'N/A'}</span>
-              </div>
-              <div className="detail-item">
-                <label>Email:</label>
-                <span>{subscription.subscriber?.email || 'N/A'}</span>
-              </div>
-              <div className="detail-item">
-                <label>Contact Number:</label>
-                <span>{subscription.subscriber?.contact || 'N/A'}</span>
-              </div>
-              <div className="detail-item full-width">
-                <label>Address:</label>
-                <span>{subscription.subscriber?.address || 'N/A'}</span>
-              </div>
-            </div>
-          </div>
-
-          {/* Beneficiaries Information */}
-          <div className="detail-section">
-            <h3>Beneficiaries ({subscription.beneficiaries?.length || 0})</h3>
-            {subscription.beneficiaries && subscription.beneficiaries.length > 0 ? (
-              <div className="beneficiaries-list">
-                {subscription.beneficiaries.map((beneficiary, index) => (
-                  <div key={index} className="beneficiary-card">
-                    <h4>Beneficiary {index + 1}</h4>
-                    <div className="detail-grid">
-                      <div className="detail-item">
-                        <label>First Name:</label>
-                        <span>{beneficiary.fullName || 'N/A'}</span>
-                      </div>
-                      <div className="detail-item">
-                        <label>Surname:</label>
-                        <span>{beneficiary.surname || 'N/A'}</span>
-                      </div>
-                      <div className="detail-item">
-                        <label>ID Number:</label>
-                        <span>{beneficiary.idNumber || 'N/A'}</span>
-                      </div>
-                      <div className="detail-item">
-                        <label>Date of Birth:</label>
-                        <span>{beneficiary.dateOfBirth || 'N/A'}</span>
-                      </div>
-                      <div className="detail-item">
-                        <label>Gender:</label>
-                        <span>{beneficiary.gender ? beneficiary.gender.charAt(0).toUpperCase() + beneficiary.gender.slice(1) : 'N/A'}</span>
-                      </div>
-                      <div className="detail-item">
-                        <label>Relationship:</label>
-                        <span>{beneficiary.relationship ? beneficiary.relationship.charAt(0).toUpperCase() + beneficiary.relationship.slice(1) : 'N/A'}</span>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <div className="no-beneficiaries-message">
-                <p>No beneficiaries added to this policy.</p>
-              </div>
-            )}
-          </div>
-
-          {/* Payment Information */}
-          <div className="detail-section">
-            <h3>Payment Information</h3>
-            <div className="detail-grid">
-              <div className="detail-item">
-                <label>Payment Method:</label>
-                <span>
-                  {subscription.paymentMethod === 'debit-order' ? 'Debit Order' : 
-                   subscription.paymentMethod === 'eft' ? 'Monthly EFT' : 
-                   subscription.paymentMethod === 'cash' ? 'Cash Payment' : 
-                   'Unknown'}
-                </span>
-              </div>
-              <div className="detail-item">
-                <label>Monthly Fee:</label>
-                <span>R{subscription.monthlyFee || 100}</span>
-              </div>
-              {subscription.bankDetails && subscription.paymentMethod === 'debit-order' && (
-                <>
-                  <div className="detail-item">
-                    <label>Bank Name:</label>
-                    <span>{subscription.bankDetails.bankName || 'N/A'}</span>
-                  </div>
-                  <div className="detail-item">
-                    <label>Account Number:</label>
-                    <span>{subscription.bankDetails.accountNumber || 'N/A'}</span>
-                  </div>
-                  <div className="detail-item">
-                    <label>Branch Code:</label>
-                    <span>{subscription.bankDetails.branchCode || 'N/A'}</span>
-                  </div>
-                </>
-              )}
-            </div>
-          </div>
-
-          {/* Application Status */}
-          <div className="detail-section">
-            <h3>Application Status</h3>
-            <div className="detail-grid">
-              <div className="detail-item">
-                <label>Status:</label>
-                <span className={`status ${subscription.status}`}>
-                  {subscription.status ? subscription.status.charAt(0).toUpperCase() + subscription.status.slice(1) : 'Pending'}
-                </span>
-              </div>
-              <div className="detail-item">
-                <label>Date Applied:</label>
-                <span>{formatDate(subscription.createdAt)}</span>
-              </div>
-              <div className="detail-item">
-                <label>Last Updated:</label>
-                <span>{formatDate(subscription.updatedAt)}</span>
-              </div>
-              <div className="detail-item">
-                <label>Total Members:</label>
-                <span>{(subscription.beneficiaries?.length || 0) + 1} (Subscriber + {subscription.beneficiaries?.length || 0} beneficiaries)</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
 
 function Dashboard() {
   const { logout, currentUser } = useAuth();
@@ -196,6 +35,9 @@ function Dashboard() {
   const [loading, setLoading] = useState(true);
   const [selectedSubscription, setSelectedSubscription] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [isEditDateModalOpen, setIsEditDateModalOpen] = useState(false);
   const [activeFilter, setActiveFilter] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
   const [stats, setStats] = useState({
@@ -254,13 +96,56 @@ function Dashboard() {
     }
   };
 
+  const deleteSubscription = async (id) => {
+    try {
+      await deleteDoc(doc(db, "subscriptions", id));
+      console.log(`Subscription ${id} deleted successfully`);
+      alert("Subscription deleted successfully!");
+      setIsDeleteModalOpen(false);
+      setSelectedSubscription(null);
+    } catch (error) {
+      console.error("Error deleting subscription:", error);
+      alert("Failed to delete subscription. Please try again.");
+    }
+  };
+
   const handleViewDetails = (subscription) => {
     setSelectedSubscription(subscription);
     setIsModalOpen(true);
   };
 
+  const handlePaymentTracker = (subscription) => {
+    setSelectedSubscription(subscription);
+    setIsPaymentModalOpen(true);
+  };
+
+  const handleDeleteSubscription = (subscription) => {
+    setSelectedSubscription(subscription);
+    setIsDeleteModalOpen(true);
+  };
+
+  const handleEditDate = (subscription) => {
+    setSelectedSubscription(subscription);
+    setIsEditDateModalOpen(true);
+  };
+
   const closeModal = () => {
     setIsModalOpen(false);
+    setSelectedSubscription(null);
+  };
+
+  const closePaymentModal = () => {
+    setIsPaymentModalOpen(false);
+    setSelectedSubscription(null);
+  };
+
+  const closeDeleteModal = () => {
+    setIsDeleteModalOpen(false);
+    setSelectedSubscription(null);
+  };
+
+  const closeEditDateModal = () => {
+    setIsEditDateModalOpen(false);
     setSelectedSubscription(null);
   };
 
@@ -486,17 +371,40 @@ function Dashboard() {
                         <button 
                           className="view-btn"
                           onClick={() => handleViewDetails(sub)}
+                          title="View Details"
                         >
                           View
+                        </button>
+                        <button 
+                          className="payment-btn"
+                          onClick={() => handlePaymentTracker(sub)}
+                          title="Payment Tracker"
+                        >
+                          💰
+                        </button>
+                        <button 
+                          className="edit-date-btn"
+                          onClick={() => handleEditDate(sub)}
+                          title="Edit Application Date"
+                        >
+                          📅
                         </button>
                         {(sub.status === 'pending' || !sub.status) && (
                           <button 
                             className="approve-btn"
                             onClick={() => updateSubscriptionStatus(sub.id, 'active')}
+                            title="Activate Subscription"
                           >
                             Activate
                           </button>
                         )}
+                        <button 
+                          className="delete-btn"
+                          onClick={() => handleDeleteSubscription(sub)}
+                          title="Delete Subscription"
+                        >
+                          🗑️
+                        </button>
                       </div>
                     </td>
                   </tr>
@@ -512,6 +420,36 @@ function Dashboard() {
         subscription={selectedSubscription}
         isOpen={isModalOpen}
         onClose={closeModal}
+      />
+
+      {/* Payment Tracker Modal */}
+      <PaymentTrackerModal 
+        subscription={selectedSubscription}
+        isOpen={isPaymentModalOpen}
+        onClose={closePaymentModal}
+        onPaymentUpdate={() => {
+          // Refresh data or update state as needed
+          console.log('Payment updated');
+        }}
+      />
+
+      {/* Edit Date Modal */}
+      <EditDateModal 
+        subscription={selectedSubscription}
+        isOpen={isEditDateModalOpen}
+        onClose={closeEditDateModal}
+        onDateUpdate={() => {
+          // Data will refresh automatically due to onSnapshot
+          console.log('Date updated');
+        }}
+      />
+
+      {/* Delete Confirmation Modal */}
+      <DeleteConfirmModal 
+        subscription={selectedSubscription}
+        isOpen={isDeleteModalOpen}
+        onClose={closeDeleteModal}
+        onConfirm={() => deleteSubscription(selectedSubscription?.id)}
       />
     </div>
   );
