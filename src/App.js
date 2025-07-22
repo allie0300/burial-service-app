@@ -168,7 +168,7 @@ function App() {
                       
                         <span className="currency">R</span>
                         <span className="amount">50</span>
-                        <span className="period">Penioner T&C's Apply</span>
+                        <span className="period">Pensioner T&C's Apply</span>
                       </div>
                     </div>
                     <Link to="/apply" className="pricing-cta">
