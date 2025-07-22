@@ -586,7 +586,7 @@ function ApplyForm() {
                 <p>Monthly Premium: R100.00</p>
                 <p>Contact ambs@almieftagh.com for account details</p>
                 <p>Payment Method: {
-                  formData.paymentMethod === 'debit-order' ? 'Debit Order' : 
+                   formData.paymentMethod === 'debit-order' ? 'Debit Order' :
                   formData.paymentMethod === 'eft' ? 'Monthly EFT' : 
                   'Cash Payment'
                 }</p>

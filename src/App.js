@@ -140,6 +140,7 @@ function App() {
                         <span className="currency">R</span>
                         <span className="amount">100</span>
                         <span className="period">/month</span>
+                        
                       </div>
                     </div>
                     <div className="pricing-features">
@@ -157,11 +158,17 @@ function App() {
                       </div>
                       <div className="feature-item">
                         <span className="check">✓</span>
-                        <span>Active immediatly after registration fee</span>
+                        <span>Active after R100 registration fee and 1 month premium</span>
                       </div>
                       <div className="feature-item">
                         <span className="check">✓</span>
                         <span>Cash or EFT payment</span>
+                      </div>
+                      <div className="feature-item">
+                      
+                        <span className="currency">R</span>
+                        <span className="amount">50</span>
+                        <span className="period">Penioner T&C's Apply</span>
                       </div>
                     </div>
                     <Link to="/apply" className="pricing-cta">
