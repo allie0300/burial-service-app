@@ -557,48 +557,11 @@ function ApplyForm() {
                 onChange={handlePaymentChange}
                 required
               >
-                <option value="debit-order">Debit Order</option>
+              
                 <option value="eft">Monthly EFT</option>
                 <option value="cash">Cash Payment</option>
               </select>
             </div>
-
-            {formData.paymentMethod === 'debit-order' && (
-              <>
-                <div className="form-group">
-                  <label>Bank Name *</label>
-                  <input
-                    type="text"
-                    name="bankName"
-                    value={formData.bankDetails.bankName}
-                    onChange={handlePaymentChange}
-                    required
-                  />
-                </div>
-
-                <div className="form-group">
-                  <label>Account Number *</label>
-                  <input
-                    type="text"
-                    name="accountNumber"
-                    value={formData.bankDetails.accountNumber}
-                    onChange={handlePaymentChange}
-                    required
-                  />
-                </div>
-
-                <div className="form-group">
-                  <label>Branch Code *</label>
-                  <input
-                    type="text"
-                    name="branchCode"
-                    value={formData.bankDetails.branchCode}
-                    onChange={handlePaymentChange}
-                    required
-                  />
-                </div>
-              </>
-            )}
 
             {formData.paymentMethod === 'cash' && (
               <div className="cash-payment-info">
@@ -607,6 +570,7 @@ function ApplyForm() {
                   <p>For cash payments, please visit our office during business hours:</p>
                   <ul>
                     <li><strong>Address:</strong> 1 Marguerite Road, Lentegeur Mitchells plain, Cape Town</li>
+                    <li><strong>Or Address:</strong> 5B, Lentegeur Shopping Centre Mitchells plain, Cape Town</li>
                     <li><strong>Hours:</strong> Monday - Thursday: 8:00 AM - 5:00 PM</li>
                     <li><strong>Saturday:</strong> 8:00 AM - 1:00 PM</li>
                     <li><strong>Payment Due:</strong> Monthly by the 5th of each month</li>
@@ -620,7 +584,7 @@ function ApplyForm() {
               <div className="pricing-summary">
                 <h4>Subscription Summary</h4>
                 <p>Monthly Premium: R100.00</p>
-                <p>Covered Members: {formData.beneficiaries.length + 1} (You + {formData.beneficiaries.length} family members)</p>
+                <p>Contact ambs@almieftagh.com for account details</p>
                 <p>Payment Method: {
                   formData.paymentMethod === 'debit-order' ? 'Debit Order' : 
                   formData.paymentMethod === 'eft' ? 'Monthly EFT' : 
