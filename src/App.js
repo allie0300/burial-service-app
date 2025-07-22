@@ -56,7 +56,7 @@ function App() {
             <img src={almieftaghLogo} alt="ALMIEFTAGH Burial Services Logo" className="app-logo" />
           </Link>
           {/* Keep the h2 here */}
-          <h2>ALMIEFTAGH Burial Services</h2>
+          <h2>AL-MIEFTAGH Burial Services</h2>
         </div>
         <div className="nav-links">
           <Link to="/" className={`nav-link ${location.pathname === '/' ? 'active' : ''}`}>
@@ -82,7 +82,7 @@ function App() {
           <Route path="/" element={
             <div className="home-page">
               <div className="hero-section">
-                <h1>Welcome to Almieftagh Burial Services</h1>
+                <h1>Welcome to Al-Mieftagh Burial Services</h1>
                 <p className="hero-subtitle">Dignified Islamic burial services for your family</p>
                 <div className="hero-features">
                   <div className="feature">
@@ -106,7 +106,7 @@ function App() {
               {/* Additional Home Page Content */}
               <div className="info-sections">
                 <div className="info-section">
-                  <h2>Why Choose ALMIEFTAGH?</h2>
+                  <h2>Why Choose AL-MIEFTAGH?</h2>
                   <div className="info-grid">
                     <div className="info-card">
                       <div className="info-icon">🕌</div>
@@ -226,7 +226,7 @@ function App() {
       <footer className="app-footer">
         <div className="footer-content">
           <div className="footer-section">
-            <h3>ALMIEFTAGH Burial Services</h3>
+            <h3>AL-MIEFTAGH Burial Services</h3>
             <p>Providing dignified Islamic burial services with compassion and respect for over a decade.</p>
           </div>
           <div className="footer-section">
@@ -253,7 +253,7 @@ function App() {
           </div>
         </div>
         <div className="footer-bottom">
-          <p>&copy; 2019 ALMIEFTAGH Burial Services. All rights reserved.</p>
+          <p>&copy; 2019 AL-MIEFTAGH Burial Services. All rights reserved.</p>
           <p>Developed with care for the community.</p>
         </div>
       </footer>
