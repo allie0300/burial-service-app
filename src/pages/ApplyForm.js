@@ -149,11 +149,11 @@ function ApplyForm() {
     });
 
     // Payment validation
-    if (formData.paymentMethod === 'debit-order') {
-      if (!formData.bankDetails.bankName.trim()) throw new Error('Bank name is required');
-      if (!formData.bankDetails.accountNumber.trim()) throw new Error('Account number is required');
-      if (!formData.bankDetails.branchCode.trim()) throw new Error('Branch code is required');
-    }
+    //if (formData.paymentMethod === 'debit-order') {
+     // if (!formData.bankDetails.bankName.trim()) throw new Error('Bank name is required');
+      //if (!formData.bankDetails.accountNumber.trim()) throw new Error('Account number is required');
+      //if (!formData.bankDetails.branchCode.trim()) throw new Error('Branch code is required');
+    //}
 
     const checkboxes = document.querySelectorAll('input[type="checkbox"]');
     for (let checkbox of checkboxes) {
@@ -403,10 +403,10 @@ function ApplyForm() {
         {/* Step 2: Beneficiaries */}
         {step === 2 && (
           <fieldset className="form-section">
-            <legend>Family Members to Cover ({formData.beneficiaries.length}/5)</legend>
+            <legend>Family Members to Cover ({formData.beneficiaries.length}/9)</legend>
             
             <div className="beneficiary-intro">
-              <p>You can add up to 5 family members to your burial benefit plan. This step is optional - you can proceed to payment without adding beneficiaries.</p>
+              <p>You can add your family members to your burial benefit plan. This step is optional - you can proceed to payment without adding beneficiaries.</p>
             </div>
 
             {formData.beneficiaries.length === 0 ? (
